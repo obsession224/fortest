@@ -1,4 +1,4 @@
-name: Build DLL
+name: Build DLL in Cloud
 
 on: 
   push:
@@ -12,14 +12,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Visual Studio
-      uses: microsoft/setup-msbuild@v2
+    - name: Add MSVC to PATH
+      run: |
+        echo "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.38.33130\bin\Hostx64\x64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      shell: powershell
       
     - name: Compile DLL
       run: |
         cl.exe /LD /MT /EHsc /std:c++17 main.cpp /Fe:CS2_Cheat.dll /link gdi32.lib user32.lib
       shell: cmd
-        
+      
     - name: Upload DLL
       uses: actions/upload-artifact@v4
       with:
